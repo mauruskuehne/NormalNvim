@@ -157,6 +157,11 @@ function M.apply_user_lsp_settings(server_name)
     pcall(require, "neodev")
     opts.settings = { Lua = { workspace = { checkThirdParty = false } } }
   end
+  if server_name == "angularls" then
+    local util = require('lspconfig.util') 
+    root_dir = util.root_pattern('angular.json', 'project.json')
+    opts.root_dir = root_dir
+  end
 
   -- Apply them
   local old_on_attach = server.on_attach
