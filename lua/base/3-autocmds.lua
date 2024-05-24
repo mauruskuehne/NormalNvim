@@ -245,7 +245,7 @@ autocmd("BufWritePre", {
 -- Customize this command to work as you like
 cmd("TestNodejs", function()
   vim.cmd ":ProjectRoot"                  -- cd the project root (requires project.nvim)
-  vim.cmd ":TermExec cmd='npm run tests'" -- convention to run tests on nodejs
+  vim.cmd ":TermExec cmd='npm run test:webclient:ci'" -- convention to run tests on nodejs
   -- You can generate code coverage by add this to your project's packages.json
   -- "tests": "jest --coverage"
 end, { desc = "Run all unit tests for the current nodejs project" })
