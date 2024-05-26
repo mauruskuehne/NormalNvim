@@ -644,52 +644,53 @@ return {
         },
       }
 
-            -- Javascript / Typescript (firefox)
-            -- dap.adapters.firefox = {
-            --   type = 'executable',
-            --   command = vim.fn.stdpath('data') .. '/mason/bin/firefox-debug-adapter',
-            -- }
-            -- dap.configurations.typescript = {
-            --   {
-            --     name = 'Debug with Firefox',
-            --     type = 'firefox',
-            --     request = 'launch',
-            --     reAttach = true,
-            --     url = 'http://localhost:4200', -- Write the actual URL of your project.
-            --     webRoot = '${workspaceFolder}',
-            --     firefoxExecutable = '/usr/bin/firefox'
-            --   }
-            -- }
-            -- dap.configurations.javascript = dap.configurations.typescript
-            -- dap.configurations.javascriptreact = dap.configurations.typescript
-            -- dap.configurations.typescriptreact = dap.configurations.typescript
-
-            -- Javascript / Typescript (chromium)
-            -- If you prefer to use this adapter, comment the firefox one.
-            -- But to use this adapter, you must manually run one of these two, first:
-            -- * chromium --remote-debugging-port=9222 --user-data-dir=remote-profile
-            -- * google-chrome-stable --remote-debugging-port=9222 --user-data-dir=remote-profile
-            -- After starting the debugger, you must manually reload page to get all features.
-            dap.adapters.chrome = {
-                type = 'executable',
-                command = vim.fn.stdpath('data') .. '/mason/bin/chrome-debug-adapter',
-            }
-            dap.configurations.typescript = {
-                {
-                    name = 'Debug with Chromium',
-                    type = "chrome",
-                    request = "attach",
-                    program = "${file}",
-                    cwd = vim.fn.getcwd(),
-                    sourceMaps = true,
-                    protocol = "inspector",
-                    port = 9222,
-                    webRoot = "${workspaceFolder}"
-                }
-            }
-            dap.configurations.javascript = dap.configurations.typescript
-            dap.configurations.javascriptreact = dap.configurations.typescript
-            dap.configurations.typescriptreact = dap.configurations.typescript
+      -- Javascript / Typescript (firefox)
+      --[[
+      dap.adapters.firefox = {
+        type = 'executable',
+        command = vim.fn.stdpath('data') .. '/mason/bin/firefox-debug-adapter',
+      }
+      dap.configurations.typescript = {
+        {
+          name = 'Debug with Firefox',
+          type = 'firefox',
+          request = 'launch',
+          reAttach = true,
+          url = 'http://localhost:4200', -- Write the actual URL of your project.
+          webRoot = '${workspaceFolder}',
+          firefoxExecutable = '/usr/bin/firefox'
+        }
+      }
+      dap.configurations.javascript = dap.configurations.typescript
+      dap.configurations.javascriptreact = dap.configurations.typescript
+      dap.configurations.typescriptreact = dap.configurations.typescript
+      ]]--
+      -- Javascript / Typescript (chromium)
+      -- If you prefer to use this adapter, comment the firefox one.
+      -- But to use this adapter, you must manually run one of these two, first:
+      -- * chromium --remote-debugging-port=9222 --user-data-dir=remote-profile
+      -- * google-chrome-stable --remote-debugging-port=9222 --user-data-dir=remote-profile
+      -- After starting the debugger, you must manually reload page to get all features.
+      dap.adapters.chrome = {
+        type = 'executable',
+        command = vim.fn.stdpath('data')..'/mason/bin/chrome-debug-adapter',
+      }
+      dap.configurations.typescript = {
+        {
+          name = 'Debug with Chromium',
+          type = "chrome",
+          request = "attach",
+          program = "${file}",
+          cwd = vim.fn.getcwd(),
+          sourceMaps = true,
+          protocol = "inspector",
+          port = 9222,
+          webRoot = "${workspaceFolder}"
+        }
+      }
+      dap.configurations.javascript = dap.configurations.typescript
+      dap.configurations.javascriptreact = dap.configurations.typescript
+      dap.configurations.typescriptreact = dap.configurations.typescript
 
       -- PHP
       dap.adapters.php = {
