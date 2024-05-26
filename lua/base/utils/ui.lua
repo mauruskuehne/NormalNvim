@@ -16,6 +16,7 @@
 --      -> toggle_buffer_semantic_tokens
 --      -> toggle_buffer_syntax
 --      -> toggle_codelens
+--      -> toggle_coverage_signs
 --      -> toggle_cmp
 --      -> toggle_conceal
 --      -> toggle_diagnostics
@@ -122,7 +123,7 @@ end
 function M.toggle_buffer_inlay_hints(bufnr)
   bufnr = bufnr or 0
   vim.b[bufnr].inlay_hints_enabled = not vim.b[bufnr].inlay_hints_enabled
-  vim.lsp.inlay_hint(bufnr, vim.b[bufnr].inlay_hints_enabled)
+  vim.lsp.inlay_hint.enable(vim.b[bufnr].inlay_hints_enabled, { bufnr = bufnr })
   utils.notify(string.format("Inlay hints %s", bool2str(vim.b[bufnr].inlay_hints_enabled)))
 end
 
@@ -131,7 +132,7 @@ end
 function M.toggle_buffer_semantic_tokens(bufnr)
   bufnr = bufnr or 0
   vim.b[bufnr].semantic_tokens_enabled = not vim.b[bufnr].semantic_tokens_enabled
-  for _, client in ipairs(vim.lsp.get_active_clients({ bufnr = bufnr })) do
+  for _, client in ipairs(vim.lsp.get_clients({ bufnr = bufnr })) do
     if client.server_capabilities.semanticTokensProvider then
       vim.lsp.semantic_tokens[vim.b[bufnr].semantic_tokens_enabled and "start" or "stop"](bufnr, client.id)
       utils.notify(string.format("Buffer lsp semantic highlighting %s", bool2str(vim.b[bufnr].semantic_tokens_enabled)))
@@ -162,6 +163,23 @@ function M.toggle_codelens()
   vim.g.codelens_enabled = not vim.g.codelens_enabled
   if not vim.g.codelens_enabled then vim.lsp.codelens.clear() end
   utils.notify(string.format("CodeLens %s", bool2str(vim.g.codelens_enabled)))
+end
+
+--- Toggle coverage signs
+function M.toggle_coverage_signs(bufnr)
+  bufnr = bufnr or 0
+  vim.b[bufnr].coverage_signs_enabled = not vim.b[bufnr].coverage_signs_enabled
+  if vim.b[bufnr].coverage_signs_enabled then
+    utils.notify("Coverage signs on:" ..
+                 "\n\n- Git signs will be temporary disabled." ..
+                 "\n- Diagnostic signs won't be automatically disabled.")
+    vim.cmd("Gitsigns toggle_signs")
+    require("coverage").load(true)
+  else
+    utils.notify("Coverage signs off:\n\n- Git signs re-enabled.")
+    require("coverage").hide()
+    vim.cmd("Gitsigns toggle_signs")
+  end
 end
 
 --- Toggle cmp entrirely
@@ -204,9 +222,10 @@ end
 --- Toggle LSP inlay hints (global)
 -- @param bufnr? number the buffer to toggle the clients on
 function M.toggle_inlay_hints(bufnr)
-  vim.g.inlay_hints_enabled = not vim.g.inlay_hints_enabled     -- flip global state
-  vim.b.inlay_hints_enabled = not vim.g.inlay_hints_enabled     -- sync buffer state
-  vim.lsp.buf.inlay_hint(bufnr or 0, vim.g.inlay_hints_enabled) -- apply state
+  bufnr = bufnr or 0
+  vim.g.inlay_hints_enabled = not vim.g.inlay_hints_enabled -- flip global state
+  vim.b.inlay_hints_enabled = not vim.g.inlay_hints_enabled -- sync buffer state
+  vim.lsp.buf.inlay_hint.enable(vim.g.inlay_hints_enabled, { bufnr = bufnr }) -- apply state
   utils.notify(string.format("Global inlay hints %s", bool2str(vim.g.inlay_hints_enabled)))
 end
 

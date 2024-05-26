@@ -4,7 +4,6 @@
 -- All autocmds are defined here.
 
 --    Sections:
---
 --       ## EXTRA LOGIC
 --       -> 1. Events to load plugins faster.
 --       -> 2. Save/restore window layout when possible.
@@ -244,7 +243,7 @@ autocmd("BufWritePre", {
 
 -- Customize this command to work as you like
 cmd("TestNodejs", function()
-  vim.cmd ":ProjectRoot"                  -- cd the project root (requires project.nvim)
+  vim.cmd ":ProjectRoot"                 -- cd the project root (requires project.nvim)
   vim.cmd ":TermExec cmd='npm run test:webclient:ci'" -- convention to run tests on nodejs
   -- You can generate code coverage by add this to your project's packages.json
   -- "tests": "jest --coverage"
