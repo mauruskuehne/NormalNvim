@@ -1,3 +1,26 @@
+-- General usage autocmds.
+
+-- DESCRIPTION:
+-- All autocmds are defined here.
+
+--    Sections:
+--
+--       ## EXTRA LOGIC
+--       -> 1. Events to load plugins faster.
+--       -> 2. Save/restore window layout when possible.
+--       -> 3. Launch alpha greeter on startup.
+--       -> 4. Update neotree when closing the git client.
+--       -> 5. Create parent directories when saving a file.
+--
+--       ## COOL HACKS
+--       -> 6. Effect: URL underline.
+--       -> 7. Customize right click contextual menu.
+--       -> 8. Unlist quickfix buffers if the filetype changes.
+--       -> 9. Close all notifications on BufWritePre.
+--
+--       ## COMMANDS
+--       -> 10. Neotest commands.
+--       ->     Extra commands.
 
 local autocmd = vim.api.nvim_create_autocmd
 local cmd = vim.api.nvim_create_user_command
@@ -204,3 +227,56 @@ autocmd("FileType", {
   pattern = "qf",
   callback = function() vim.opt_local.buflisted = false end,
 })
+
+-- 9. Close all notifications on BufWritePre.
+autocmd("BufWritePre", {
+  desc = "Close all notifications on BufWritePre",
+  callback = function()
+    require("notify").dismiss({ pending = true, silent = true })
+  end,
+})
+
+-- ## COMMANDS --------------------------------------------------------------
+
+-- 10. Testing commands
+-- Aditional commands to the ones implemented in neotest.
+-------------------------------------------------------------------
+
+-- Customize this command to work as you like
+cmd("TestNodejs", function()
+  vim.cmd ":ProjectRoot"                  -- cd the project root (requires project.nvim)
+  vim.cmd ":TermExec cmd='npm run test:webclient:ci'" -- convention to run tests on nodejs
+  -- You can generate code coverage by add this to your project's packages.json
+  -- "tests": "jest --coverage"
+end, { desc = "Run all unit tests for the current nodejs project" })
+
+-- Customize this command to work as you like
+cmd("TestNodejsE2e", function()
+  vim.cmd ":ProjectRoot"                -- cd the project root (requires project.nvim)
+  vim.cmd ":TermExec cmd='npm run e2e'" -- Conventional way to call e2e in nodejs (requires ToggleTerm)
+end, { desc = "Run e2e tests for the current nodejs project" })
+
+-- Extra commands
+----------------------------------------------
+
+-- Change working directory
+cmd("Cwd", function()
+  vim.cmd ":cd %:p:h"
+  vim.cmd ":pwd"
+end, { desc = "cd current file's directory" })
+
+-- Set working directory (alias)
+cmd("Swd", function()
+  vim.cmd ":cd %:p:h"
+  vim.cmd ":pwd"
+end, { desc = "cd current file's directory" })
+
+-- Write all buffers
+cmd("WriteAllBuffers", function()
+  vim.cmd "wa"
+end, { desc = "Write all changed buffers" })
+
+-- Close all notifications
+cmd("CloseNotifications", function()
+  require("notify").dismiss({ pending = true, silent = true })
+end, { desc = "Dismiss all notifications" })
