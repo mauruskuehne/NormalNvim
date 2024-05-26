@@ -4,7 +4,6 @@
 -- All mappings are defined here.
 
 --    Sections:
---
 --       ## Base bindings
 --       -> icons displayed on which-key.nvim
 --       -> standard operations
@@ -795,7 +794,7 @@ if is_available "litee-calltree.nvim" then
     vim.defer_fn(function()
       for _, win in ipairs(vim.api.nvim_list_wins()) do
         local buf = vim.api.nvim_win_get_buf(win)
-        local ft = vim.api.nvim_buf_get_option(buf, 'filetype')
+        local ft = vim.api.nvim_get_option_value('filetype', { buf = buf })
 
         if ft == "calltree" then
           vim.api.nvim_set_current_win(win)
@@ -1223,14 +1222,16 @@ end
 if is_available "nvim-coverage" then
   maps.n["<leader>Tc"] = {
     function()
-      utils.notify(
-        "Attempting to find coverage/lcov.info in project root...",
-        vim.log.levels.INFO
-      )
       require("coverage").load(false)
       require("coverage").summary()
     end,
     desc = "Coverage",
+  }
+  maps.n["<leader>TC"] = {
+    function()
+      ui.toggle_coverage_signs()
+    end,
+    desc = "Coverage signs (toggle)",
   }
 end
 
@@ -1424,7 +1425,10 @@ function M.lsp_mappings(client, bufnr)
   if client.supports_method "textDocument/formatting"
       and not vim.tbl_contains(formatting.disabled, client.name) then
     lsp_mappings.n["<leader>lf"] = {
-      function() vim.lsp.buf.format(M.format_opts) end,
+      function()
+        vim.lsp.buf.format(M.format_opts)
+        vim.cmd('checktime') -- update buffer to reflect changes.
+      end,
       desc = "Format buffer",
     }
     lsp_mappings.v["<leader>lf"] = lsp_mappings.n["<leader>lf"]
@@ -1533,14 +1537,11 @@ function M.lsp_mappings(client, bufnr)
 
   if client.supports_method "textDocument/inlayHint" then
     if vim.b.inlay_hints_enabled == nil then vim.b.inlay_hints_enabled = vim.g.inlay_hints_enabled end
-    -- TODO: remove check after dropping support for Neovim v0.9
-    if vim.lsp.inlay_hint then
-      if vim.b.inlay_hints_enabled then vim.lsp.inlay_hint(bufnr, true) end
-      lsp_mappings.n["<leader>uH"] = {
-        function() require("base.utils.ui").toggle_buffer_inlay_hints(bufnr) end,
-        desc = "LSP inlay hints (buffer)",
-      }
-    end
+    if vim.b.inlay_hints_enabled then vim.lsp.inlay_hint.enable(true, { bufnr = bufnr }) end
+    lsp_mappings.n["<leader>uH"] = {
+      function() require("base.utils.ui").toggle_buffer_inlay_hints(bufnr) end,
+      desc = "LSP inlay hints (buffer)",
+    }
   end
 
   if client.supports_method "textDocument/references" then

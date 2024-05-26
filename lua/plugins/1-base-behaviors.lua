@@ -88,11 +88,11 @@ return {
       silent_chdir = true,
       manual_mode = false,
 
-      -- Don't auto-chdir for specific filetypes.
-      exclude_filetype_chdir = { "", "OverseerList", "alpha" },
-
-      -- Don't auto-chdir for specific buftypes.
-      exclude_buftype_chdir = { "nofile", "terminal" },
+      -- Don't chdir for certain buffers
+      exclude_chdir = {
+        filetype = {"", "OverseerList", "alpha"},
+        buftype = {"nofile", "terminal"},
+      },
 
       --ignore_lsp = { "lua_ls" },
     },
@@ -105,11 +105,11 @@ return {
     "cappyzawa/trim.nvim",
     event = "BufWrite",
     opts = {
-      -- ft_blocklist = {"typescript"},
       trim_on_write = true,
       trim_trailing = true,
       trim_last_line = false,
       trim_first_line = false,
+      -- ft_blocklist = { "markdown", "text", "org", "tex", "asciidoc", "rst" },
       -- patterns = {[[%s/\(\n\n\)\n\+/\1/]]}, -- Only one consecutive bl
     },
   },
@@ -659,9 +659,9 @@ return {
   {
     'kosayoda/nvim-lightbulb',
     enabled = vim.g.codeactions_enabled,
-    event = "VeryLazy",
+    event = "User BaseFile",
     opts = {
-      action_kinds = {  -- show only for relevant code actions.
+      action_kinds = { -- show only for relevant code actions.
         "quickfix",
       },
       ignore = {

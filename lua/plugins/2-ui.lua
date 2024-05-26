@@ -30,7 +30,7 @@ return {
   -- tokyonight [theme]
   -- https://github.com/folke/tokyonight.nvim
   {
-    "Zeioth/tokyonight.nvim",
+    "zeioth/tokyonight.nvim",
     event = "User LoadColorSchemes",
     opts = {
       dim_inactive = false,
@@ -276,7 +276,8 @@ return {
             "startify",
             "toggleterm",
             "Trouble",
-            "calltree"
+            "calltree",
+            "coverage"
           }
           if vim.tbl_contains(ignored_filetypes, vim.bo.filetype) then
             vim.b.miniindentscope_disable = true
@@ -287,7 +288,7 @@ return {
   },
 
   -- heirline-components.nvim [ui components]
-  -- https://github.com/Zeioth/heirline-components.nvim
+  -- https://github.com/zeioth/heirline-components.nvim
   -- Collection of components to use on your heirline config.
   {
     "zeioth/heirline-components.nvim",

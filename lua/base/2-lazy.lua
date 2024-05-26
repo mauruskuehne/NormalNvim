@@ -4,7 +4,6 @@
 -- Use this file to configure the way you get updates.
 
 --    Sections:
---
 --      -> lazy updater options  → choose your lazy updates channel here.
 --      -> extra behaviors       → extra stuff we add to lazy for better UX.
 --      -> assign spec           → if channel==stable, uses lazy_snatshot.lua
@@ -24,8 +23,7 @@ local updater = {
 --    (but not when updating them)
 --  * Then show notifications and stuff.
 local lazypath = vim.fn.stdpath "data" .. "/lazy/lazy.nvim"
-local luv = vim.uv or vim.loop
-if not luv.fs_stat(lazypath) then
+if not vim.uv.fs_stat(lazypath) then
   local output = vim.fn.system {
     "git",
     "clone",

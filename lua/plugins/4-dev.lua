@@ -2,9 +2,6 @@
 -- Things you actively use for coding.
 
 --    Sections:
---       ## COMMENTS
---       -> comment.nvim                   [comment with a key]
-
 --       ## SNIPPETS
 --       -> luasnip                        [snippet engine]
 --       -> friendly-snippets              [snippet templates]
@@ -44,29 +41,6 @@
 local is_windows = vim.fn.has('win32') == 1 -- true if on windows
 
 return {
-  --  COMMENTS ----------------------------------------------------------------
-  --  Advanced comment features [comment with a key]
-  --  https://github.com/numToStr/Comment.nvim
-  {
-    "numToStr/Comment.nvim",
-    event = "User BaseFile",
-    opts = function()
-      -- improve performance, when possible
-      local _, ts_context_commentstring =
-          pcall(require, "ts_context_commentstring.integrations.comment_nvim")
-      local pre_hook = ts_context_commentstring.create_pre_hook() or nil
-
-      -- opts
-      return {
-        pre_hook = pre_hook
-      }
-    end,
-    keys = {
-      { "gc", mode = { "n", "v" }, desc = "Comment toggle linewise" },
-      { "gb", mode = { "n", "v" }, desc = "Comment toggle blockwise" },
-    },
-  },
-
   --  SNIPPETS ----------------------------------------------------------------
   --  Vim Snippets engine  [snippet engine] + [snippet templates]
   --  https://github.com/L3MON4D3/LuaSnip
@@ -76,7 +50,7 @@ return {
     build = not is_windows and "make install_jsregexp" or nil,
     dependencies = {
       "rafamadriz/friendly-snippets",
-      "Zeioth/NormalSnippets",
+      "zeioth/NormalSnippets",
       "benfowler/telescope-luasnip.nvim",
     },
     event = "User BaseFile",
@@ -195,7 +169,11 @@ return {
       backends = { "lsp", "treesitter", "markdown", "man" },
       disable_max_lines = vim.g.big_file.lines,
       disable_max_size = vim.g.big_file.size,
-      layout = { min_width = 28 },
+      layout = {
+        min_width = 28,
+        default_direction = "right",
+        placement = "edge",
+      },
       show_guides = true,
       guides = {
         mid_item = "├ ",
@@ -216,14 +194,14 @@ return {
     },
     config = function(_, opts)
       require("aerial").setup(opts)
-      -- HACK: The first time you opened aerial on a session, close all folds.
-      vim.api.nvim_create_autocmd("FileType", {
-        desc = "Aerial: The first time its open on a session, close all folds.",
+      -- HACK: The first time you open aerial on a session, close all folds.
+      vim.api.nvim_create_autocmd({"FileType", "BufEnter"}, {
+        desc = "Aerial: When aerial is opened, close all its folds.",
         callback = function()
           local is_aerial = vim.bo.filetype == "aerial"
           local is_ufo_available = require("base.utils").is_available("nvim-ufo")
-          if is_ufo_available and is_aerial and vim.g.new_aerial_session == nil then
-            vim.g.new_aerial_session = false
+          if is_ufo_available and is_aerial and vim.b.new_aerial_session == nil then
+            vim.b.new_aerial_session = false
             require("aerial").tree_set_collapse_level(0, 0)
           end
         end,
@@ -289,9 +267,9 @@ return {
 
   --  CODE DOCUMENTATION ------------------------------------------------------
   --  dooku.nvim [html doc generator]
-  --  https://github.com/Zeioth/dooku.nvim
+  --  https://github.com/zeioth/dooku.nvim
   {
-    "Zeioth/dooku.nvim",
+    "zeioth/dooku.nvim",
     cmd = {
       "DookuGenerate",
       "DookuOpen",
@@ -315,10 +293,10 @@ return {
   },
 
   --  [markdown markmap]
-  --  https://github.com/Zeioth/markmap.nvim
+  --  https://github.com/zeioth/markmap.nvim
   --  Important: Make sure you have yarn in your PATH before running markmap.
   {
-    "Zeioth/markmap.nvim",
+    "zeioth/markmap.nvim",
     build = "yarn global add markmap-cli",
     cmd = { "MarkmapOpen", "MarkmapSave", "MarkmapWatch", "MarkmapWatchStop" },
     config = function(_, opts) require("markmap").setup(opts) end,
@@ -382,9 +360,9 @@ return {
 
   --  COMPILER ----------------------------------------------------------------
   --  compiler.nvim [compiler]
-  --  https://github.com/Zeioth/compiler.nvim
+  --  https://github.com/zeioth/compiler.nvim
   {
-    "Zeioth/compiler.nvim",
+    "zeioth/compiler.nvim",
     cmd = {
       "CompilerOpen",
       "CompilerToggleResults",
@@ -884,7 +862,7 @@ return {
   --  If you use other framework or language, refer to nvim-coverage docs:
   --  https://github.com/andythigpen/nvim-coverage/blob/main/doc/nvim-coverage.txt
   {
-    "andythigpen/nvim-coverage",
+    "zeioth/nvim-coverage", -- Our fork until all ourPRs are merged.
     cmd = {
       "Coverage",
       "CoverageLoad",
@@ -896,7 +874,12 @@ return {
       "CoverageSummary",
     },
     dependencies = { "nvim-lua/plenary.nvim" },
-    config = function() require("coverage").setup() end,
+    opts = {
+      summary = {
+        min_coverage = 80.0, -- passes if higher than
+      },
+    },
+    config = function(_, opts) require("coverage").setup(opts) end,
   },
 
   -- LANGUAGE IMPROVEMENTS ----------------------------------------------------
