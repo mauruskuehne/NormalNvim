@@ -27,6 +27,10 @@ local is_android = vim.fn.isdirectory('/data') == 1 -- true if on android
 
 return {
 
+  -- catppuccin [theme]
+  -- https://github.com/catppuccin/nvim
+  { "catppuccin/nvim", event = "User LoadColorSchemes", name = "catppuccin", priority = 1000 },
+
   -- tokyonight [theme]
   -- https://github.com/folke/tokyonight.nvim
   {
@@ -439,6 +443,14 @@ return {
             preview_cutoff = 120,
           },
           mappings = mappings,
+          file_ignore_patterns = {
+            "node_modules",
+            "documentation.json",
+            "dist/",
+            ".nx",
+            ".idea/workspace.xml",
+            "cache/",
+          },
         },
         extensions = {
           undo = {
